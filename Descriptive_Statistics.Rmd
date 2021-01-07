@@ -1,0 +1,89 @@
+---
+title: 'Assignment 4: Descriptive Statistics'
+author: "5, Breeana Gonzalez, Elyse Burgess, Joseph Flores, Austin"
+date: "2/11/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
+  
+## Instructions
+  
+Please complete the following assignment in RStudio and save your work as an R markdown notebook (file extension: .Rmd, see <https://rmarkdown.rstudio.com/lesson-1.html>). See <https://bookdown.org/yihui/rmarkdown/> for a complete guide on R markdown. This work should be done as a group and all members of the group should contribute approximately equally. To determine who is in your group, view "Groups" on the side panel of this course's eCampus site. You may use the internet to help solve these problems. 
+  
+Download Assignment04.Rmd from eCampus and open it in RStudio. Complete this assignment by filling in each answer in the R Markdown Notebook document. The answers may contain both code chunks and normal text writing (done outside of code chunks). For full credit, show all R code within the code chunks. Remember, you may click the **Knit** button to generate a formatted PDF or Word document. Each group should submit to eCampus the following items (seperate files, not as a single zip file):  
+1) the completed .Rmd file  
+2) a .pdf (or a .doc) file knitted from the completed .Rmd file 
+  
+### Context
+  
+In this assignment we will be applying descriptive statistics in R to examine the temporal patterns of car crashes in College Station. We will be using automobile crash data from 2010-2019 in College Station compiled by the Texas Department of Transportation Crash Records Information System. This dataset contains the following variables:  
+1. Crash.ID - the incident identification number  
+2. Crash.Time - the time of the accident in 24 Hour-Minute format: HHMM  
+3. Crash.Year - the year that the crash occurred   
+4. Day.of.Week - the day of the week when the crash occurred (MONDAY = 1, TUESDAY = 2, ..., SUNDAY = 7)  
+5. Longitude - the longitude where the crash took place (in decimal degrees)  
+6. Latitude - the latitude where the crash took place (in decimal degrees)  
+  
+## Questions
+  
+1. Read in the crash.csv directly to RStudio using the following URL: http://people.tamu.edu/~geoallen/courses/312/crash.csv and set it to the "crash" variable. Then print the dimensions of the crash table (do NOT print the entire table please). 
+```{r}
+path = "http://people.tamu.edu/~geoallen/courses/312/crash.csv"
+crash = read.csv(path, header=T)
+```
+  
+2. Which day of the week are College Station drivers most likely to get into an accident? Remember to show your R work.
+```{r}
+uniqv = unique(crash$Day.of.Week)
+print(uniqv[which.max(tabulate(match(crash$Day.of.Week, uniqv)))])
+#Monday
+```
+3. Calculate the following central tendency statistics for crash times (across all days and years): mean, median, mode. Fill in the data frame below with your answers (replace the NAs). 
+```{r}
+# fill in the data frame (replace NAs): 
+uniqv = unique(crash$Crash.Time)
+modeTime = uniqv[which.max(tabulate(match(crash$Crash.Time, uniqv)))]
+df = data.frame(mean=mean(crash$Crash.Time), 
+                median=median(crash$Crash.Time), 
+                mode=modeTime
+                )
+print(df)
+```
+  
+4. What time are drivers most likely to get into an accident in College Station? Why might that be? 
+```{r}
+print(modeTime)
+# The time is 5:30 PM which is rush hour so that means there are more cars on the road.
+```
+5. Calculate and print the following measures of variability: range, interquartile range, standard deviation, 5th percentile, 95th percentile, coefficient of variation. Similar to Question 3, report your answers in the data frame below. 
+```{r}
+# fill in the data frame (replace NAs): 
+df = data.frame(range=range(crash$Crash.Time), 
+                interquartileRange=IQR(crash$Crash.Time), 
+                stdDev=sd(crash$Crash.Time),
+                fifthPercentile=quantile(crash$Crash.Time, .05),
+                ninetyfifthPercentile=quantile(crash$Crash.Time, 0.95),
+                CoefVar=sd(crash$Crash.Time)/mean(crash$Crash.Time)*100
+                )
+print(df)
+```
+  
+6. Calculate and print the following the skewness of the crash times. Is this distribution negatively skewed, positively skewed, or symmetrical? What does the skewness tell us about the timing of crashes in College Station? 
+```{r}
+install.packages("e1071")
+library(e1071)
+skewness(crash$Crash.Time)
+# The distribution is negatively skewed. This indicates that most of the crashes occur at later times.
+```
+7. Calculate the kurtosis of the crash times. What type of kurtosis do these data display? Is the distribution of crash times in College Station more or less peaked than a normal (Gaussian) distribution? 
+```{r}
+kurtosis(crash$Crash.Time)
+# The kurtosis is negative (platykurtic). This indicates that the distribution is shorter and wider than a normal Gaussian distribution.
+```
+

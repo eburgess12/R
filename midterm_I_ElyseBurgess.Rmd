@@ -1,0 +1,90 @@
+---
+title: "GEOG 312 Midterm Exam I"
+author: "Elyse Burgess"
+date: "3/5/2020"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
+  
+### Instructions  
+  
+You have 24 hours to complete this exam. You will  be graded on the clarity of your thought, and your ability to convey clear and concise information about your observations. Plots will be graded based on the highest standards of data visualization. Use RStudio to do your analysis within the code chunks below. Explain your reasoning and show your work where necessary, but do not include extraneous, irrelevant information and plots. You may use the the class lecture slides, your assignments, or other extraneous material, but you should not work together nor should you consult others in preparing your answers.  
+  
+**Deliverables:**  
+Submit to eCampus the following items as separate files, not as a single zip file:  
+
+1. A .pdf (or .doc) file knitted from the completed .Rmd file  
+2. The completed .Rmd file   
+  
+### Questions
+A student was interested in assessing the effects of environmental factors on the biosphere. As a potential barometer, she decided to measure the growth of large trees in the Pacific Northwest, near Seattle, Washington. She selected three sites:  
+  A. High in the foothills of the Cascade Mountains  
+  B. Along the Columbia river near Mt. Hood, Oregon  
+  C. On the eastern shores of Lake Washington, in the Seattle metropolitan area  
+  
+Her observations are available in a CSV file here: http://people.tamu.edu/~geoallen/courses/312/treeRing_5cn18krj.csv
+  
+She measured the thickness (in millimeters) of 20 tree rings on one tree at each site and she made special attempts to insure that each tree sampled was approximately the same age, 20 years. The data, presented below directly from the researcher's notebooks, were recorded from the center of the tree extending outward, i.e. from older to younger rings.  As a data analyst, you must help the geographer determine if environmental factors were different for these three regions. 
+
+1. Read the TreeRing.csv data and assign it to the variable “tree”. Print the structure of tree. 
+```{r}
+# setup
+  path = "http://people.tamu.edu/~geoallen/courses/312/treeRing_5cn18krj.csv"
+  tree = read.csv(path, header = T)
+  colnames(tree) = c('Cascade', 'Columbia', 'Lake Washington')
+  tree$id = row.names(tree)
+# packages
+  library(ggplot2)
+  library(dplyr)
+  library(tidyr)
+# reshape data to long format
+  tree_melt = tree %>% pivot_longer(., c('Cascade', 'Columbia', 'Lake Washington'))
+  tree_melt$name = as.factor(tree_melt$name)
+  str(tree)
+```
+
+2. Use the ggplot2 package to visualize these data in a manner that supports any interpretations you make in the  questions below. Adhere to Tufte’s principles of data graphics in making your visualizations.  
+
+```{r}
+library(ggplot2)
+ggplot(tree_melt, aes(x = name, y = value)) + 
+  geom_boxplot() + 
+  labs(x = 'Site', y = 'Ring Thickness (mm)', title = 'Pacific Northwest Tree Growth',
+       subtitle = 'Ring thickness among large trees (n=20) from three sites near Seattle, Washington') 
+```
+  
+3. Use descriptive statistics to summarize the measurements. What environmental factors might explain the differences between these three groups? Note the locales for each of the observations and take the associated environments into account in your interpretation. (If you do not know where these places are, look them up.)  
+
+```{r}
+summary(tree)
+```
+Environmental factors to explain the variance between the three sites include difference in elevation, soil type and precipitation. The Cascade Mountain environment is much more suitable for tree growth than either along the Columbia river or shores of Lake Washington.   
+  
+4. State any assumptions you make for the purposes of comparing the data from the three sites. 
+
+normality
+  
+5. Use a parametric test to determine whether the samples are different from each other at the 95% confidence interval. State the Null hypothesis and the Alternative hypothesis.  
+
+```{r}
+summary(aov(value ~ name, data = tree_melt))
+```
+Yes, the samples are different from each other at the 95% confidence interval.
+
+Null hypothesis:Ring thickness variance among large trees is equal
+Alternative hypothesis: Ring thickness variance among large trees is not equal
+The P-value is less than 0.05, so we reject the null hypothesis as the ring thickness variance among large trees is not equal.
+
+  
+6. What other information would help you refine your analysis? 
+Values from environmental factors such average temperature, humidity, soil quality, and precipitation would help refine the analysis. The quantity and trees present at each site may give insight on why only a sample size of 1 was chosen.
+
+  
+7. What is peculiar (suspicious) about way the data were recorded and presented?
+The biggest issue is related to each site only having a sample size of 1, with no mention as to how the tree was selected other than age. Data recorded is suspicious by not having any missing data and all sites have 20 rings in each tree. The two sites of Columbia and Lake Washington are along a body of water, resulting in lower ring thickness in a less suitable environmnent. A better analysis might consider a more middle ground environment instead a drastic jump of low elevation of water and high elevation in a mountainous region.
+  
+8. (no credit) Approximately how many hours of work were spent completing this exam? 4
+

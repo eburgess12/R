@@ -1,0 +1,18 @@
+
+# non-parametric tests
+
+g1 = c(57, 62, 55, 68, 75, 65, 45)
+g2 = c(66, 72, 59, 67, 71, 55, 50)
+
+
+df = data.frame(g1, g2)
+
+boxplot(df)
+
+df
+
+df_stack = stack(df)
+
+# wilcoxon rank-sum test:
+#p-val is less than 0.05 --> reject the null hypothesis that samples are the same
+wilcox.test(value ~ ind, data = df_stack)

@@ -1,0 +1,23 @@
+library(ggplot2)
+library(tidyr)
+
+# read in the data
+student_enr = "C:/Users/belys/Downloads/Student_Ethnicity_data.csv"
+Ethn = read.csv(student_enr, header=T)
+
+gender_enr = "C:/Users/belys/Downloads/Gender_Number of Enrollment.csv"
+Gend = read.csv(gender_enr, header=T)
+
+wilcox.test(value ~ ind, data = df_stack)
+
+# remove commas from numbers and convert variables to numeric
+student_enr$`White Only` <- as.numeric(gsub(",", "", student_enr$`White Only`))
+student_enr$`Asian Only` <- as.numeric(gsub(",", "", student_enr$`Asian Only`))
+student_enr$`Black Only + 2 or more/1 Black` <- as.numeric(gsub(",", "", student_enr$`Black Only + 2 or more/1 Black`))
+student_enr$`Hispanic or Latino of any Race` <- as.numeric(gsub(",", "", student_enr$`Hispanic or Latino of any Race`))
+student_enr$`2 or More/Excluding Black` <- as.numeric(gsub(",", "", student_enr$`2 or More/Excluding Black`))
+student_enr$International <- as.numeric(gsub(",", "", student_enr$International))
+
+gender_enr$Male <- as.numeric(gsub(",", "", gender_enr$Male))
+gender_enr$Female <- as.numeric(gsub(",", "", gender_enr$Female))
+gender_enr$Total <- as.numeric(gsub(",", "", gender_enr$Total))

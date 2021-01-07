@@ -1,0 +1,150 @@
+---
+title: 'Assigment 1: Simple Computations in R'
+author: "Elyse Burgess"
+date: "1/20/2020"
+output: 
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+## Instructions
+
+In this class we will use a programming language called R. R is an open-source language and environment for statistical computing and graphics. Additionally, we will be using a third-party program called RStudio, which is an Integrated Development Environment (IDE), or a program in which we can use R. Before completing this R tutorial, you will need to install R and RStudio on your computer. Directions to do so can be found here: <http://people.tamu.edu/~geoallen/courses/312/install_R_&_RStudio.pdf>.
+
+Please complete the following questions in RStudio and save your work as an R markdown notebook (file extension: .Rmd, see <https://rmarkdown.rstudio.com/lesson-1.html>). See <https://bookdown.org/yihui/rmarkdown/> for a complete guide on R markdown. 
+
+Download the Assignment01.Rmd file from eCampus and open it in RStudio. Then complete this assignment by filling in answer in the R markdown notebook. For full credit, show your R code as well as the answers (see example answer to first question below). You may use the internet to help you solve these problems. Remember to save your .Rmd file often. When finished, click the **Knit** button to generate an HTML document. Please submit to eCampus the .Rmd file.  
+
+## Questions
+
+1.	Compute 3/5. Set result to the variable A and print A. 
+
+```{r}
+  A = 3/5
+  print(A)
+```
+
+2.	Compute e^π. Set result to the variable B and print B. 
+
+```{r}
+  B = exp(pi)
+  print(B)
+```
+
+3.	Make a vector (C) of length 10, starting with 3 and skipping every 2 integers and print C.
+
+```{r}
+  C = seq(from=3, length.out = 10, by=3)
+  print(C)
+```
+
+4.	Raise each element of C by the power of 2, set it to variable D and print D.
+```{r}
+  D = C^2
+  print(D)
+```
+
+5.	Plot the square of vector (C) versus the index of the elements. 
+
+```{r}
+  X = C[1:10]
+  Y = D
+  plot(D)
+```
+
+6.	Sort vector (C) in reverse order. Set result to the variable E and print E. 
+```{r}
+  E = rev(C)
+  print(E)
+```
+
+7.	Which elements of C are greater than 10? Set result to the variable F and print F. 
+```{r}
+  F = (C[C > 10])
+  print(F)
+```
+
+8.	Add all the elements of C together. Set result to the variable G and print G. 
+```{r}
+  G = sum(C) 
+  print(G)
+```
+
+9.	Divide all the elements of C by the sum of C. Set result to the variable H and print H.
+```{r}
+  H = C/sum(C)
+  print(H)
+```
+
+10.	Create a sequence of 25 numbers from −π to π. Set result to the variable I and print I. 
+```{r}
+  I = seq(from=-pi, to=pi,length.out = 25)
+  print(I)
+```
+
+11.	Find the first difference of the vector C (difference between each vector element). Set result to the variable J and print J. 
+```{r}
+  J = diff(C, lag = 1)
+  print(J)
+```
+
+12.	Find the second difference of the vector C. Set result to the variable K and print K.
+```{r}
+  K = diff(C, lag = 2)
+  print(K)
+```
+
+13.	Get 48 random, uniformly distributed numbers, put in vector L and print L. 
+```{r}
+  L = runif(48)
+  print(L)
+```
+
+14.	What is the maximum, minimum and median of L? Set result to the variable M and print M. 
+```{r}
+  M = c(max(L), min(L), median(L))
+  print(M)
+```
+
+15.	Plot a histogram of L and include the plot below. This is an empirical distribution. 
+```{r}
+  hist(L)
+```
+16.	Concatenate 2 vectors ( C and C^2 ) using the 'c' function. For example: c(B,D). Set result to the variable N and print N. 
+```{r}
+  N = c(C,D)
+  print(N)
+```
+
+17.	Form a 6 by 8 matrix of random numbers from vector L in question 13. Set matrix to the variable O and print O. 
+```{r}
+  O = matrix(L, nrow=6, ncol=8)
+  print(O)
+```
+
+18.	Select the 3rd column and set it equal to the variable P. Print P.
+```{r}
+  P = O[1:6,3]
+  print(P)
+```
+
+19.	Select the 5th column and set it to Q. Print Q. 
+```{r}
+  Q = O[1:6,5]
+  print(Q)
+```
+
+20.	Find the dot product of P and Q. Set result to the variable R and print R. 
+```{r}
+  R = P %*% Q
+  print (R)
+```
+
+
+
+

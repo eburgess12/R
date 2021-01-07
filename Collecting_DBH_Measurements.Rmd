@@ -1,0 +1,81 @@
+---
+title: 'Assignment 5: Collecting DBH Measurements'
+author: "5, Breeana Gonzalez, Elyse Burgess, Joseph Flores, Austin Whitson"
+date: "2/14/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
+  
+## Instructions 
+  
+You have been hired by the University to determine the average size of trees on east campus as measured by the diameter at breast height (DBH). You do not need to measure every tree on east campus but rather you need to estimate the average size of the trees on campus. Working in your group, measure the DBH of at least 30 trees and record their location information using decimal degree Lat/Long. Ask Dr. Allen if your group can’t figure out how to access Lat/Lon on your phone. 
+  
+**Data Collection**  
+When you collect data, it is important that you have an organized collection form, especially when working in the field. Think of your raw data as the pieces to a jigsaw puzzle that you will use to put it all together. The data you collect and the strategy that you use to collect the data should match the analysis that you will be using to test your research question/hypothesis. Since this is the main link between your field work and analysis it is important that the form is easy to understand and easy to work with. Please fill in this CSV table with your field measurements: <http://people.tamu.edu/~geoallen/courses/312/assignment05_DBH_table.csv>. Do not alter the header (column names) of your CSV file. Upload your CSV to eCampus. 
+  
+**Data Analysis**  
+For the following analysis portion of this assignment, please complete your work in the RStudio Markdown document. Your answers may contain both code chunks and normal text writing (done outside of the code chunks). Click the Knit button to generate a formatted PDF or Word document. 
+  
+**Deliverables**  
+For this assignment, each group should submit to eCampus the following items (seperate files, not as a single zip file):  
+1) the carefully-formated CSV file (assignment05_DBH_table.csv) containing your field measurements. 
+1) the completed .Rmd file  
+2) a .pdf (or a .doc) file knitted from the completed .Rmd file  
+  
+  
+## Questions
+  
+1. Are the collected DBH measurements a discrete or continuous random variable?
+```{r}
+# The measurements are discrete.
+```
+2. Read in your assignment05_DBH_table.csv table to RStudio and assign it to the variable "DBH". Print DBH.
+```{r}
+path = "C:/Users/Will/Documents/GEOG 312/Assignment 5/assignment_5_data.csv"
+DBH = read.csv(path, header=T)
+```
+
+3. Calculate and print the mean and standard deviation of your DBH sample. 
+```{r}
+df = data.frame(mean=mean(DBH$DBH..Diameter..in.Centimeters), 
+                standard_deviation=sd(DBH$DBH..Diameter..in.Centimeters, na.rm=F) 
+                )
+print(df)
+```
+  
+4. Plot the locations of your DBH measurements using ggplot2 as blue points. In addition, plot the mean center of your measurements as a red point and the standard distance as a black circle around the mean center. 
+```{r}
+longC = mean(DBH$Longitude..DD., na.rm=T)
+latC = mean(DBH$Latitude..DD., na.rm=T)
+meanCenter = data.frame(longC, latC)
+
+install.packages("aspace")
+library(aspace)
+calc_sdd(meanCenter)
+sdd=DBH$SDD.radius
+
+library(ggplot2)
+ggplot() +
+  geom_point(data=DBH, aes(x=DBH$Longitude..DD., y=DBH$Latitude..DD.), 
+             alpha=0.3, color = "blue") +
+  geom_point(data=meanCenter, aes(x=longC, y=latC), 
+                                  color="red", size=2) +
+  geom_point(data=sdd, aes(x=longC, y=latC),
+                                  color="black", size=1) +
+  theme_bw() +
+  labs(title = "DBH of Trees near H20 Pond",
+        y = "Latitude", x = "longitude")
+  
+```
+  
+5. (no credit) Including the fieldwork, approximately how many hours of work was spent completing this assignment (average time per group member)? 
+```{r}
+# It took about 3 hours.
+```
+  

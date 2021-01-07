@@ -1,0 +1,55 @@
+# define path to input file:
+path = "/Users/belys/Documents/GEOG_312/Assignments/Input/lecture03_data_dirty.csv"
+
+#read csv in:
+crash = read.csv(file=path, header=T)
+
+
+#view table:
+head(crash)
+tail(crash)
+
+
+#get table dimensions:
+nrow(crash)
+ncol(crash)
+dim(crash)
+
+#get individual rows and columns:
+crash[c(1:5, 5]
+crash[, 3]
+
+crash$Crash.Time
+crash$SNOW
+
+
+#class 
+class(crash)
+
+
+#view classes of variables within crash
+str(crash)
+
+
+# summarize table:
+summary(crash)
+
+#plot raw data
+barplot(crash$Speed.Limit)
+boxplot(crash$Speed.Limit)
+hist(crash$Speed.Limit)
+
+# combine multiple columns:
+crash$Weather = NA
+crash$Weather = [crash$CLEAR == TRUE] = "CLEAR"
+crash$Weather = [crash$CLOUDY == TRUE] = "CLOUDY"
+crash$Weather = [crash$RAIN == TRUE] = "RAIN"
+crash$Weather = [crash$SNOW == TRUE] = "SNOW"
+
+#negative sign before index indicates that we are removing columns
+crash_clean = [,-c(10:13)]
+
+# print name of columns:
+names(crash)
+
+

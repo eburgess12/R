@@ -1,0 +1,188 @@
+---
+title: 'Assignment 7: Collecting Spatial Data'
+author: "15 and  Elyse Burgess, Jasmine Berganza, Colton Privitt"
+date: "3/24/2020"
+output:
+  word_document: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+\newline  
+  
+### Instructions 
+  
+Please complete your work in the RStudio Markdown document. Your answers may contain both code chunks and normal text writing (done outside of the code chunks). Click the Knit button to generate a formatted PDF or Word document. This work should be done as a group and all members of the group should contribute approximately equally. To determine who is in your group, view "Groups" on the side panel of this course's eCampus site. You may use the internet to help solve these problems. 
+  
+**Research Question:**
+The University is trying to prevent underground water main leaks and is interested to know how surface temperature varies between the following surfaces:  
+  
+1. Grass  
+2. Sidewalk  
+3. Parking lot  
+4. Bare Earth (dirt)  
+
+Before you go outside, work as a group in the classroom to design the following spatial sampling approaches to measure surface temperature. Use each approach on a different surface.  Use your paper map handouts to design the sampling approaches.   
+  
+* *Approach 1*: Systematic sampling  
+  
+* *Approach 2*: Simple random sampling  
+  
+* *Approach 3*: Random sampling within clusters (6-10 clusters please)  
+  
+* *Approach 4*: Stratified random sampling (stratums: shadow, no shadow)  
+  
+\newline  
+  
+Working as a group, conduct several spatial sampling surveys in the region mapped below:
+![Map](campusMap.jpg) 
+  
+For each surface, collect 30 observations of the following variables:  
+1. Surface type (Grass, Sidewalk, Parking lot)  
+2. Approach - the sampling approach taken for the surface (Approach 1, Approach 2, etc.)  
+3. Date (MM/DD/YYYY)  
+4. Time (HH:MM:SS)  
+5. Longitude (decimal degrees) - using your phone GPS  
+6. Latitude (decimal degrees) - using your phone GPS  
+7. Temperature (degrees celcius) - using the radiant thermometers  
+8. Notes - any additional information you wish to record  
+  
+Use the following CSV data table to record your field observations: [assignment07.csv](http://people.tamu.edu/~geoallen/courses/312/assignment07.csv). Do not alter the table name or  column names, and be sure your observations are in the correct format and unit. *Any deviations from the exact formatting specified above will be penalized*. 
+
+**Deliverables**  
+For this assignment, each group should submit to eCampus the following items as seperate files, not as a single zip file:  
+1. the *exactly-formated* CSV file containing your measurements (assignment07.csv)  
+2. the completed .Rmd file  
+3. a .pdf (or a .doc) file knitted from the completed .Rmd file  
+  
+  
+#### Types of Sampling
+Most studies draw a sample from a population, which is ultimately of greatest interest in our research. Your final results are only as good as how you sampled the population and then applied your statistics. In this respect, it is critical that prior to starting a study, you decide on what to measure, where, when and how often.  
+  
+In general, we can obtain an *unbiased sample* by giving every member of a population an equal chance of being included in the sample.  
+
+* *Simple random sampling*: each individual has an equal chance of being included in a sample. Random samples are, however, prone to error. For example, quite by chance a random sample might contain a disproportionately large number of individuals with specific characteristics.  
+  
+* *Systematic sampling*: every nth individual is selected or individuals are sampled every nth minute/hour etc. 
+  
+* *Cluster sampling*: groups of individuals or samples within specific areas, with the individuals in each cluster drawn at random. A strength and a weakness of cluster sampling is that individuals from each cluster tend to be homogeneous.   
+  
+* *Stratified random sampling*: the population is divided into strata and samples are drawn randomly (from the above methods) from each strata.  
+  
+  
+The opposite of unbiased sampling is to collect a *sample of convenience*, in which the investigator chooses the individuals to sample out of convenience. 
+  
+* *Purposive sampling*: individuals are selected that are believed to give us the best information.  
+  
+It is important to remember that sampling by its nature is biased and that you do not place too much confidence in your results- do not assume your results have concreteness.  
+\newline  
+  
+  
+#### Spatial Sampling
+
+Data will be collected through space rather than repeated measurement in the laboratory or at a location through time. The starting point for spatial sampling is a map of the area to studied, such as provided on the next page of this handout. As discussed in class, spatial sampling can involve:
+    
+* *Line*: line samples in which data are collected from subjects that fall on or within a certain distance of the traverse  
+  
+* *Quadrats*: subjects that fall within an area are sampled. The quadrats are usually distributed randomly.  
+
+* *Point*: subjects at or within a certain distance of a point are sampled.  
+  
+  
+![](spatialSampling.png) 
+\newline  
+
+
+
+### Questions
+  
+1. Read your completed assignment07.csv table into RStudio and assign it to the variable "temperature". Print temperature. 
+```{r}
+path = "C:/Users/belys/Documents/GEOG_312/Assignments/Input/Assignment7_inputfile.csv"
+temperature  = read.csv(path, header = T)
+print(temperature)
+```
+  
+2. In a single ggplot figure, compare the distribution of temperature samples for each surface. Graphics will be graded according to the highest standards of visualization. Include a title and caption describing what is being shown in your figure. 
+```{r}
+library(ggplot2)
+install.packages("ggthemes")
+as.factor(temperature$Temp_C == "Temperature")
+
+ggplot(data = temperature) +
+geom_boxplot(aes(x = Surface_type, y = Temp_C)) +
+   labs(title="Temperature of Each Surface", x = "Surface Type", y = "Temperature (C)", caption = "The distribution of temperature in surface types") +
+      theme_classic()
+```
+   
+3. In a single ggplot figure, plot the locations of your temperature measurements and label the different surfaces. For extra credit, include shapefile information in your ggplot available for [download here](http://people.tamu.edu/~geoallen/courses/312/campus_shp.zip). 
+```{r}
+# fix latitude type
+temperature$Lat_dd = as.numeric(as.character(temperature$Lat_dd))
+
+#install.packages(rgdal)
+library(utils)
+library(rgdal)
+
+#Campus shapefile directory for extra credit
+campus = tempfile()
+download.file("http://people.tamu.edu/~geoallen/courses/312/campus_shp.zip", campus)
+unzip(campus)
+unlink(campus)
+
+#Assign Variables
+Parking_Lots = readOGR(dsn = ".", layer = "Parking_Lots")
+Sidewalk = readOGR(dsn = ".", layer = "Sidewalk")
+Streets = readOGR(dsn = ".", layer = "Streets")
+Buildings = readOGR(dsn = ".", layer = "structure")
+
+#Map
+Sidewalk_map_points = Sidewalk_map + geom_point(data = subset(temperature, Surface_type == 'Sidewalk'), aes(x = temperature$Long_dd, y = temperature$Lat_dd, color = temperature$Surface_type))
+
+Sidewalk_map = ggplot() + geom_polygon(data = Sidewalk, aes(x = long, y = lat, group = group), color = "black", fill = NA) + theme_void()
+Sidewalk_map_points = Sidewalk_map + geom_point(data = temperature[c(-8, -54), ], aes(x = Long_dd, y = Lat_dd, color = Temp_C, shape = Surface_type)) + 
+  geom_point() + 
+  scale_color_gradient(low = 'blue', high = 'red') +
+  scale_shape_manual(values = c(15, 17, 18, 19))  +
+  theme_classic()
+
+
+#End Product
+Final_Map = Sidewalk_map_points + ggtitle("Campus Temperature Measurement Groups") +  labs(color = "Temperature (C)", shape = "Surface")
+Final_Map
+
+```
+  
+4. In a paragraph, provide a description of how your group completed your systematic sampling, simple random sampling, random sampling within clusters, and stratified random sampling approaches. Refer to the map above to explain your sampling strategies. 
+   
+   First, we did simple random sampling in Lot 10A where a randomly chose spots to measure. We did stratified random sampling on the sidewalk by taking measurements in a straight line, three steps apart. For the grass surface type we did systematic sampling where we divided the area 5 x 6. For dirt, we did cluster sampling and choose one small area of dirt and took random samples. 
+  
+5. Using the non-parametric Wilcoxon test in R, determine whether there is a statistically-significant difference between the temperature of the sidewalk and the temperature of the parking lot at the 95% confidence interval. State the null hypothesis and show whether you are able to reject it.    
+```{r}
+levels(temperature$Surface_type)
+sidewalk_temp = subset(temperature, Surface_type == 'Sidewalk')[, 'Temp_C']
+lot_temp = subset(temperature, Surface_type == 'Lot')[, 'Temp_C']
+wilcox.test(sidewalk_temp, lot_temp) 
+```
+Null hypothesis: sidewalk temp = lot_temp is
+
+Given the p < 0.05, we reject the null hypothesis that the temperatures are equal.
+
+6. Using the non-parametric Kruskal-Wallis test, determine whether there is a statistically-significant difference between the temperatures of all four sampled surfaces at the 95% confidence interval. State the null hypothesis and show whether you are able to reject it. 
+```{r}
+kruskal.test(Temp_C ~ Surface_type, data = temperature)
+```
+  Null hypothesis: dirt = grass = lot = sidewalk
+  
+Given the p < 0.05, we reject the null hypothesis that the temperatures are equal. 
+
+7. (no credit) Approximately how many hours of work was spent completing this assignment (average time per group member)? #3
+
+
+
+
+
