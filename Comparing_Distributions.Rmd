@@ -1,0 +1,116 @@
+---
+title: 'Assignment 6: Comparing Distributions'
+author: "Group 5 Elyse Burgess, Joseph Flores, Breeana Gonzalez, Austin Whitson"
+date: "2/25/20"
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
+  
+## Instructions 
+  
+Please complete your work in the RStudio Markdown document. Your answers may contain both code chunks and normal text writing (done outside of the code chunks). Click the Knit button to generate a formatted PDF or Word document. This work should be done as a group and all members of the group should contribute approximately equally. To determine who is in your group, view "Groups" on the side panel of this course's eCampus site. You may use the internet to help solve these problems. 
+  
+**Data**  
+In this assignment, we will apply inferential statistics to the DBH measurements that we collected for Assignment #5. Using R, I have compiled and cleaned all DBH data that groups submitted for Assignment #5. If your group's data are not included in the compiled table, you will need to read in your own observations that you collected for Assignment #5 to complete some of the questions below. 
+  
+**Background**  
+Background information on sample size, the null hypothesis, the Z-test, t-test, ANOVA and the F-statistic can be found here: http://people.tamu.edu/~geoallen/courses/312/assignment06_background.pdf  
+  
+**Deliverables**  
+For this assignment, each group should submit to eCampus the following items as seperate files, not as a single zip file:  
+1) a .pdf (or a .doc) file knitted from the completed .Rmd file  
+2) the completed .Rmd file  
+  
+## Questions
+  
+1. Read into RStudio the compiled DBH measurements available at http://people.tamu.edu/~geoallen/courses/312/assignment06_DBH_data.csv and set the table to the variable "tree". Print the structure of tree using the str() function. 
+```{r}
+path = "http://people.tamu.edu/~geoallen/courses/312/assignment06_DBH_data.csv"
+tree = read.csv(path, header = T)
+str(tree)
+```
+  
+2. In a single ggplot figure, compare the distribution of DBH samples for each group in tree. Graphics will be graded according to the highest standards of visualization. Include a caption describing what is being shown in your figure. Hint: convert the Group variable data typehttps://i.groupme.com/550x461.png.01ca6c0e63724f1e8a85c90c6fb6c600.large from integer to factor.  
+```{r}
+tree$Group = as.factor(tree$Group)
+str(tree)
+
+
+ggplot(data = tree, aes(x = Group, y = DBH_cm)) + geom_Violin(aes(fill = Group), alpha = 0.8,) + theme_bw()
+```
+   
+3. Use R to calculate the mean DBH of all measurements in tree. Assume the ~400 values measured for by the class represents the population of tree diameters. Determine if your group’s sample is *significantly different* from the population mean at the *99% confidence interval*. Print the t-statistic and p-value that you calculated using R and describe your results in terms of the null hypothesis. Note that if your group's sample is not included in the tree table, read them into RStudio to complete this question.  
+```{r}
+path = "*C:/Users/belys/Documents/GEOG_312/assignment06_DBH_data.csv"
+DBH = read.csv(file = path, header = T)
+
+mu = mean(tree$DBH_cm)
+mu
+
+t.test(x = tree$DBH_cm[tree$DBH_cm], mu = mu)
+t.test(x = DBH$DBH_cm[DBH$DBH_cm], mu = 20.72607979)
+
+x = tree$DBH_cm
+y = DBH$DBH_cm
+print(t.test(x, y), conf.level = .99)
+```
+There is strong evidence to reject the null hypothesis by a p-value of . The sample mean is statistically signficant in differing from the population mean. 
+
+4. Determine whether the DBH samples of trees in Zone A are significantly different from the samples taken in Zone D at the 95% confidence interval. Combine all observations in each zone to complete your calculation. Print the t-statistic and p-value, and describe your results in terms of the null hypothesis. 
+```{r}
+#Zone Group
+tree$Zone = as.factor(tree$Zone)
+
+mu_D = mean(tree$DBH_cm & tree$Zone == "D")
+
+t.test(tree$DBH_cm[tree$Zone == "D"], mu = mu_D, conf.level = 0.95)
+
+mu_A = mean(tree$DBH_cm & tree$Zone == "A")
+
+t.test(tree$DBH_cm[tree$Zone == "A"], mu = mu_A, conf.level = 0.95)
+
+cat("Since the p-value is greater than 0.5 in both samples, the null hypothesis is not rejected")
+  
+```
+   
+5. Determine whether there is a statistically significant difference between all four zones at the 95% confidence interval (use all groups' data in the tree table). Print the F-statistic and p-value and describe your results in terms of the null hypothesis.  
+```{r}
+# F-test
+key_Zone <- bartlett.test(DBH_cm~Zone,tree)
+# get F-statistic and p-value
+F_Zone <- data.frame(F_stat=round(key_Zone$statistic,2), P_value=key_Zone$p.value)
+row.names(F_Zone) = 'Zone F-test'
+print(F_Zone)
+```
+Null Hypothesis: DBH variance of Zones are equal
+Alternative Hypothesis: DBH variance of Zones are not equal
+The P-value is less than 0.05, so we reject the null hypothesis as the DBH variance of Zones are not equal.
+
+6. Similarly, determine whether there is a statistically significant difference between all group samples at the 95% confidence interval (use all group data in the tree table). Print the F-statistic and p-value and describe your results in terms of the null hypothesis. Discuss the reason(s) why the results from Question 5 and Question 6 are the same (or different). 
+```{r}
+# F-test
+key_group <- bartlett.test(DBH_cm~Group,tree)
+# get F-statistic and p-value
+F_group <- data.frame(F_stat=round(key_group$statistic,2), P_value=key_group$p.value)
+row.names(F_group) = 'Group F-test'
+print(F_group)
+```
+Null hypothesis: DBH variance of different groups are equal
+Alternative hypothesis: DBH variance of different groups are not equal
+
+The P-value is less than 0.05, so we reject the null hypothesis as the DBH variance of different groups are not equal.
+
+7. (no credit) Approximately how many hours of work was spent completing this assignment (average time per group member)? 
+
+
+
+
+
